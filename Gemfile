@@ -15,18 +15,17 @@ gem 'puma', '~> 3.0'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 gem 'carrierwave', '0.10.0'
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 gem 'carrierwave-aws', '1.0.2'
+gem 'mini_magick'
 gem 'jwt'
 gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
 # gem 'mongoid-geospatial', git: "https://github.com/tedma4/mongoid-geospatial", require: 'mongoid/geospatial'
 # gem 'rgeo', '0.5.3'
 gem 'faker', '1.7.3'
 gem 'figaro'
-
-gem 'devise'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
