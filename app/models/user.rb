@@ -7,6 +7,7 @@ class User
   has_one :session, dependent: :destroy
   mount_uploader :avatar, AttachmentUploader
   before_save :encrypt_password
+  after_create :create_session_record
 
   field :email, type: String, default: ""
   validates_uniqueness_of :email
@@ -17,12 +18,12 @@ class User
 
   # Delegate
   delegate :url, :size, :path, to: :avatar
-  field :attached_item_id, type: Integer
-  field :attached_item_type, type: String 
+  # field :attached_item_id, type: Integer
+  # field :attached_item_type, type: String 
   field :avatar, type: String#, null: false
-  field :original_filename, type: String
+  # field :original_filename, type: String
   # Virtual attributes
-  alias_attribute :filename, :original_filename
+  # alias_attribute :filename, :original_filename
   validates_integrity_of  :avatar
   validates_processing_of :avatar
 
@@ -274,7 +275,13 @@ class User
   #  end
   # end
   # ---------- Create and update Area Watcher ----------- END
-
+  def create_session_record
+    require 'json_web_token'
+    sesh = Session.new
+    sesh.user_id = self.id 
+    sesh.jwt = JsonWebToken.encode({user_id: self.id.to_s})
+    sesh.save
+  end
   private
 
     def encrypt_password

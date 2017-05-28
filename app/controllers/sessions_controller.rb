@@ -1,9 +1,9 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate_user_from_token!
+  skip_before_action :authenticate_user_from_token!, only: [:create]
   before_action :ensure_params_exist
 
   def create
-    @user = User.where(email: user_params[:email])
+    @user = User.where(email: user_params[:email]).first
     return invalid_login_attempt unless @user
     return invalid_login_attempt unless @user.authenticate(user_params[:password])
     jwt_user_hash = {user_id: @user.id.to_s}
@@ -22,8 +22,10 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session = JsonWebToken.decode(request.header["HTTP_AUTHORIZATION"])[:data][:user_id]
-    Session.where(user_id: session).first.destroy
+    # session = JsonWebToken.decode(request.header["HTTP_AUTHORIZATION"])[:data][:user_id]
+    sesh = Session.where(user_id: @current_user.id).first
+    sesh.archived_at = Time.now
+    sesh.save
   end
 
   private

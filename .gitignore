@@ -12,6 +12,7 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+# Ignore carrierwave uploads and figaro vars
 /public/uploads
 /config/application.yml
 .byebug_history
