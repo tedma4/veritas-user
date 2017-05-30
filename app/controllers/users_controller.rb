@@ -42,32 +42,21 @@ class UsersController < ApplicationController
     if params[:search] && !params[:search].blank?
       @search = User.search(params[:search])
       if @user
-        respond_with @search.map {|user| 
+        render json: @search.map {|user| 
           user = User.find(user["id"])
           User.build_search_hash(user)#, @current_user)
         }
       else
-        respond_with @search.map {|user| 
+        render json: @search.map {|user| 
             # user = User.find(user["id"])
             User.build_search_hash(user)
           }
       end
     else
       @search = nil
-      respond_with @search
+      render json: @search
     end
   end
-
-  # def user_location
-  #   # http://localhost:3000/v1/user_location?user_id=5856d773c2382f415081e8cd&location=-111.97798311710358,33.481907631522525&time_stamp=2017-01-15T18:01:24.734-07:00    
-  #   if @current_user
-  #     coords = User.add_location_data(@current_user.id, params[:location], params[:time_stamp])
-  #     @current_user.area_watcher(coords)
-  #     render json: {status: 200} #, auth_token: encoded_token}
-  #   else
-  #     render json: {errors: 400}
-  #   end
-  # end
   private
   
   def user_params
