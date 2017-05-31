@@ -23,9 +23,13 @@ class SessionsController < ApplicationController
 
   def destroy
     # session = JsonWebToken.decode(request.header["HTTP_AUTHORIZATION"])[:data][:user_id]
-    sesh = Session.where(user_id: @current_user.id).first
+    sesh = Session.where(user_id: @current_user.id, archived_at: nil).first
     sesh.archived_at = Time.now
-    sesh.save
+    if sesh.save
+      render json: "All Good", status: :ok
+    else
+      render json: {error: "Something happened"}, status: 400
+    end
   end
 
   private
@@ -36,14 +40,11 @@ class SessionsController < ApplicationController
 
   def ensure_params_exist
     if user_params[:email].blank? || user_params[:password].blank?
-      return render_unauthorized errors: { unauthenticated: ["Incomplete credentials"] }
+       invalid_login_attempt
     end
   end
 
   def invalid_login_attempt
-    self.status = :unauthorized
-    self.response_body = { error: 'Access denied' }
-
-    # render_unauthorized errors: { unauthenticated: ["Invalid credentials"] }
+    render json: {error: "Access denied"}, status: 400
   end
 end

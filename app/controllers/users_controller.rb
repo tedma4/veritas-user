@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  # skip_before_action :authenticate_user_from_token!
+  skip_before_action :authenticate_user_from_token!, only: [:create]
   require 'string_image_uploader'
   before_action :set_user, only: [:update, :destroy, :search]
 
@@ -8,24 +8,20 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params.to_h)
     @auth_token = jwt_token({user_id: @user.id.to_s})
-    respond_to do |format|
-      if @user.save
-        format.json { render json: { auth_token: @auth_token, user: @user.build_user_hash, created_at: @user.created_at } }
-      else
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.save
+      render json: { auth_token: @auth_token, user: @user.build_user_hash, created_at: @user.created_at }
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    respond_to do |format|
-      if @user.update_attributes(user_params.to_h)
-        format.json { render json: @user.build_user_hash, status: :ok }
-      else
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.update_attributes(user_params.to_h)
+      render json: @user.build_user_hash, status: :ok
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
@@ -33,9 +29,6 @@ class UsersController < ApplicationController
   # DELETE /users/1.json
   def destroy
     @user.destroy
-    respond_to do |format|
-      format.json { head :no_content }
-    end
   end
 
   def search

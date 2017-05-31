@@ -10,9 +10,10 @@ class User
   after_create :create_session_record
 
   field :email, type: String, default: ""
-  validates_uniqueness_of :email
+  validates_uniqueness_of :email, :user_name, on: [:create, :update]
   # validates_format_of :email, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => "Please Enter a Valid Email Address."
-  validates_presence_of :password, :on => :create
+  validates_presence_of :password, :email, :on => :create
+  validates_length_of :password, minimum: 8, maximum: 16, on: [:create, :update]
   field :encrypted_password, type: String, default: ""
   field :salt, type: String, default: ""
 
@@ -64,14 +65,17 @@ class User
   end
 
   def self.build_search_hash(user)
-    user_hash = {id: user.id.to_s,
-     first_name: user.first_name,
-     last_name: user.last_name,
-     email: user.email,
-     avatar: user.avatar.url,
-     user_name: user.user_name,
-     created_at: user.created_at
+    user_hash = {
+      id: user.id.to_s,
+      email: user.email,
+      created_at: user.created_at
     }
+      user_hash[:first_name] = user.first_name if user.first_name
+      user_hash[:last_name] = user.last_name if user.last_name
+      user_hash[:user_name] = user.user_name if user.user_name
+      user_hash[:normal_avatar] = user.avatar.url if user.avatar
+      user_hash[:thumb_avatar] = user.avatar.thumb.url if user.avatar
+
     # if !current_user.blank?
     #   user_hash[:friendship_status] = current_user.first.followed_users.include?(user.id.to_s) ? 
     #      "Is already a friend" : (user.pending_friends.include?(current_user.first.id.to_s) ? 
