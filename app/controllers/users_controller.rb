@@ -3,6 +3,13 @@ class UsersController < ApplicationController
   require 'string_image_uploader'
   before_action :set_user, only: [:update, :destroy, :search]
 
+  def index
+    if params[:user_ids]
+      @users = User.where(:id.in => params[:user_ids])
+      render json: @users.map(&:build_outbound_user_hash)
+    end
+  end
+
   # POST /users
   # POST /users.json
   def create
@@ -50,6 +57,8 @@ class UsersController < ApplicationController
       render json: @search
     end
   end
+
+
   private
   
   def user_params

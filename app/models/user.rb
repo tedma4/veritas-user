@@ -45,6 +45,21 @@ class User
     return user
   end
 
+  def build_outbound_user_hash
+    user = {id: self.id.to_s,
+     email: self.email,
+     created_at: self.created_at
+    }
+    user[:first_name] = self.first_name if self.first_name
+    user[:last_name] = self.last_name if self.last_name
+    user[:user_name] = self.user_name if self.user_name
+    user[:normal_avatar] = self.avatar.url if self.avatar
+    user[:thumb_avatar] = self.avatar.thumb.url if self.avatar
+    user
+    id = {self.id: user}
+    id
+  end
+
   def self.search(search)
     search = search.split(" ")
     if search.count == 1
@@ -75,14 +90,7 @@ class User
       user_hash[:user_name] = user.user_name if user.user_name
       user_hash[:normal_avatar] = user.avatar.url if user.avatar
       user_hash[:thumb_avatar] = user.avatar.thumb.url if user.avatar
-
-    # if !current_user.blank?
-    #   user_hash[:friendship_status] = current_user.first.followed_users.include?(user.id.to_s) ? 
-    #      "Is already a friend" : (user.pending_friends.include?(current_user.first.id.to_s) ? 
-    #       "Request Sent" : "Send Request")
-    # end
-    # user_hash[:like_count] = user.likes.count if user.likes
-    return user_hash
+    user_hash
   end
 
   def authenticate(password)
