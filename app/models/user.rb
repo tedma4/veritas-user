@@ -10,7 +10,8 @@ class User
   after_create :create_session_record
 
   field :email, type: String, default: ""
-  validates_uniqueness_of :email, :user_name, on: [:create, :update]
+  validates_uniqueness_of :email, on: [:create, :update]
+  validates_uniqueness_of :user_name, on: [:update]
   # validates_format_of :email, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => "Please Enter a Valid Email Address."
   validates_presence_of :password, :email, :on => :create
   validates_length_of :password, minimum: 8, maximum: 16, on: [:create, :update]
