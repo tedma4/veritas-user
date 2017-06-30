@@ -16,7 +16,7 @@ class User
   # validates_format_of :email, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => "Please Enter a Valid Email Address."
   validates_presence_of :password, :email, :on => :create
   validates_length_of :password, minimum: 8, maximum: 16, on: [:create]
-  validates_length_of :password, minimum: 8, maximum: 16, on: [:update], allow_nil: true
+  validates_length_of :password, minimum: 8, maximum: 16, on: [:update], :if => :password_changed
   field :encrypted_password, type: String, default: ""
   field :salt, type: String, default: ""
 
@@ -130,7 +130,15 @@ class User
     end
 
     def user_name_changed
-      if user_name_changed?
+      if user_name && user_name_changed?
+        true
+      else
+        false
+      end
+    end
+
+    def password_changed
+      if password && BCrypt::Engine.hash_secret(password, self.salt) != self.encrypted_password
         true
       else
         false
