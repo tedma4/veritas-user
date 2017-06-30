@@ -10,11 +10,13 @@ class User
   after_create :create_session_record
 
   field :email, type: String, default: ""
-  validates_uniqueness_of :email, on: [:create, :update]
-  validates_uniqueness_of :user_name, on: [:update]
+  validates_uniqueness_of :email, on: [:create]
+  validates_uniqueness_of :email, on: [:update], :if => :email_changed
+  validates_uniqueness_of :user_name, on: [:update], :if => :user_name_changed
   # validates_format_of :email, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => "Please Enter a Valid Email Address."
   validates_presence_of :password, :email, :on => :create
-  validates_length_of :password, minimum: 8, maximum: 16, on: [:create, :update]
+  validates_length_of :password, minimum: 8, maximum: 16, on: [:create]
+  validates_length_of :password, minimum: 8, maximum: 16, on: [:update], allow_nil: true
   field :encrypted_password, type: String, default: ""
   field :salt, type: String, default: ""
 
@@ -117,6 +119,22 @@ class User
 
     def avatar_size_validation
       errors[:avatar] << "should be less than 500KB" if avatar.size > 100.5.megabytes
+    end
+
+    def email_changed
+      if email_changed?
+        true
+      else
+        false
+      end
+    end
+
+    def user_name_changed
+      if user_name_changed?
+        true
+      else
+        false
+      end
     end
 end
 

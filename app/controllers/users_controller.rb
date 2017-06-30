@@ -25,6 +25,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    # binding.pry
     if @user.update_attributes(user_params.to_h)
       render json: @user.build_user_hash, status: :ok
     else
