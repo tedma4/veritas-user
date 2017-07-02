@@ -7,6 +7,9 @@ class UsersController < ApplicationController
     if params[:user_ids]
       @users = User.where(:id.in => params[:user_ids])
       render json: @users.map(&:build_outbound_user_hash)
+    else
+      @users = User.all
+      render json: @users.map(&:build_user_hash)
     end
   end
 
