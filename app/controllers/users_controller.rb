@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user_from_token!, only: [:create]
   require 'string_image_uploader'
-  before_action :set_user, only: [:update, :destroy, :search]
+  before_action :set_user, only: [:update, :destroy, :search, :show]
 
   def index
     if params[:user_ids]
@@ -60,6 +60,10 @@ class UsersController < ApplicationController
       @search = nil
       render json: @search
     end
+  end
+
+  def show
+    render json: @user.build_user_hash
   end
 
 
